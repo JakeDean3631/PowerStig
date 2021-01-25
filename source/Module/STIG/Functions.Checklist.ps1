@@ -240,13 +240,44 @@ function New-StigCheckList
 
     $writer.WriteStartElement("ASSET")
 
+    try
+    {
+        $targetMacAddress = Invoke-Command $hostname -ErrorAction Stop -scriptblock {
+            $macs = (Get-NetAdapter | Where-Object {$_.status -eq "Up"} | select macaddress).macaddress
+            if ( $macs.count -gt 1 )
+            {
+                $serverMacAddress = $macs[0]
+            }
+            else
+            {
+                $serverMacAddress = $macs
+            }
+            return $serverMacAddress
+        }
+
+        $targetIpAddress = Invoke-Command $hostname -ErrorAction Stop -scriptblock {
+            $serverIPs = ( Get-NetIPAddress -addressFamily ipv4 | Where-Object { $_.IpAddress -notlike "127.*" } ).IPAddress
+            if ( $serverIPs.count -gt 1 )
+            {
+                $serverIP = $ServerIps[0]
+            }
+            else
+            {
+                $serverIP = $serverIPs
+            }
+            return $serverIP
+        }
+
+        $targetFQDN = ( Get-ADComputer $hostName -ErrorAction Stop).DnsHostName
+    }
+
     $assetElements = [ordered] @{
         'ROLE'            = 'None'
         'ASSET_TYPE'      = 'Computing'
         'HOST_NAME'       = "$Hostname"
-        'HOST_IP'         = "$HostnameIPAddress"
-        'HOST_MAC'        = "$HostnameMACAddress"
-        'HOST_FQDN'       = "$HostnameFQDN"
+        'HOST_IP'         = "$targetIpAddress"
+        'HOST_MAC'        = "$targetMacAddress"
+        'HOST_FQDN'       = "$FQDN"
         'TECH_AREA'       = ''
         'TARGET_KEY'      = '2350'
         'WEB_OR_DATABASE' = 'false'
