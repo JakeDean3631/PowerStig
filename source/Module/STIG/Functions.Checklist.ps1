@@ -166,12 +166,7 @@ function New-StigCheckList
         }
         )]
         [System.IO.FileInfo]
-        $OutputPath,
-
-        [Parameter()]
-        [String]
-        $Verifier
-
+        $OutputPath
     )
 
     if ($PSBoundParameters.ContainsKey('ManualChecklistEntriesFile'))
@@ -242,38 +237,6 @@ function New-StigCheckList
     $writer.WriteStartElement('CHECKLIST')
 
     #region ASSET
-
-    # Get Local Target Node Data
-    try
-    {
-        $targetMacAddress = Invoke-Command $hostname -ErrorAction Stop -scriptblock {
-            $macs = (Get-NetAdapter | Where-Object {$_.status -eq "Up"} | select macaddress).macaddress
-            if ( $macs.count -gt 1 )
-            {
-                $serverMacAddress = $macs[0]
-            }
-            else
-            {
-                $serverMacAddress = $macs
-            }
-            return $serverMacAddress
-        }
-
-        $targetIpAddress = Invoke-Command $hostname -ErrorAction Stop -scriptblock {
-            $serverIPs = ( Get-NetIPAddress -addressFamily ipv4 | Where-Object { $_.IpAddress -notlike "127.*" } ).IPAddress
-            if ( $serverIPs.count -gt 1 )
-            {
-                $serverIP = $ServerIps[0]
-            }
-            else
-            {
-                $serverIP = $serverIPs
-            }
-            return $serverIP
-        }
-
-        $targetFQDN = ( Get-ADComputer $hostName -ErrorAction Stop).DnsHostName
-    }
 
     $writer.WriteStartElement("ASSET")
 
@@ -429,15 +392,7 @@ function New-StigCheckList
                         if ($setting.InDesiredState -eq $true)
                         {
                             $status = $statusMap['NotAFinding']
-                            if ($PSBoundParameters.ContainsKey('Verifier'))
-                            {
-                                $comments = "Addressed by PowerStig MOF via {0} and verified by {1}" -f $setting, $Verifier
-                            }
-                            else
-                            {
-                                $comments = "Addressed by PowerStig MOF via $setting"
-                            }
-
+                            $comments = "Addressed by PowerStig MOF via $setting"
                             $findingDetails = Get-FindingDetails -Setting $setting
                         }
                         elseif ($setting.InDesiredState -eq $false)

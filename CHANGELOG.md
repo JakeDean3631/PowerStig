@@ -2,12 +2,9 @@
 
 ## [Unreleased]
 
-* Update PowerSTIG to remove old rule Ids in Hard Coded Framework: [#790](https://github.com/microsoft/PowerStig/issues/790)
-* Update PowerSTIG to Parse/Apply MS Office 365 ProPlus Ver 2, Rel 1: [#811](https://github.com/microsoft/PowerStig/issues/811)
-* Update PowerSTIG to Add Checklist Accountability: [#808](https://github.com/microsoft/PowerStig/issues/808)
-* Update PowerSTIG to move O365 Pro Plus log entries into Exclusion Rule list: [#815](https://github.com/microsoft/PowerStig/issues/815)
-* Fixed: ConvertTo-ManualCheckListHashTable function call is missing mandatory argument: [#823](https://github.com/microsoft/PowerStig/issues/823)
-* Fixed: New-ConfigData function now adds local TargetNode Data to generated STIG CKLs [#828](https://github.com/microsoft/PowerStig/issues/828)
+## [4.7.1] - 2021-01-22
+
+* ConvertTo-ManualCheckListHashTable function call is missing mandatory argument: [#823](https://github.com/microsoft/PowerStig/issues/823)
 
 ## [4.7.0] - 2020-12-17
 
